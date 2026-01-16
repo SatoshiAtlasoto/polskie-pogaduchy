@@ -1,0 +1,246 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  MapPin,
+  CreditCard,
+  Smartphone,
+  Building2,
+  CheckCircle,
+} from 'lucide-react';
+import { Header } from '@/components/layout/Header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useCart } from '@/contexts/CartContext';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+
+const paymentMethods = [
+  { id: 'card', name: 'Karta', icon: CreditCard, description: 'Visa, Mastercard' },
+  { id: 'blik', name: 'BLIK', icon: Smartphone, description: 'Szybki przelew' },
+  { id: 'transfer', name: 'Przelew', icon: Building2, description: 'Natychmiastowy' },
+];
+
+export default function Checkout() {
+  const navigate = useNavigate();
+  const { items, subtotal, totalWeight, clearCart } = useCart();
+  const [selectedPayment, setSelectedPayment] = useState('card');
+  const [isConfirmed, setIsConfirmed] = useState(false);
+
+  // Pricing calculations
+  const deliveryBase = 19.99;
+  const deliveryPerKg = 0.5;
+  const deliveryCost = deliveryBase + totalWeight * deliveryPerKg;
+  const serviceFee = subtotal * 0.05;
+  const total = subtotal + deliveryCost + serviceFee;
+
+  const handleOrder = () => {
+    if (!isConfirmed) {
+      toast.error('Potwierdź kompletność zamówienia');
+      return;
+    }
+
+    // Here we would integrate with Stripe
+    toast.success('Zamówienie złożone!', {
+      description: 'Przekierowanie do płatności...',
+    });
+
+    clearCart();
+    navigate('/orders');
+  };
+
+  if (items.length === 0) {
+    navigate('/cart');
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-background pb-32">
+      {/* Custom header */}
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-lg">
+        <div className="container flex items-center gap-4 py-3">
+          <Link to="/cart">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="font-display text-lg font-bold">Płatność</h1>
+        </div>
+      </header>
+
+      <main className="container space-y-6 py-4">
+        {/* Delivery Address */}
+        <section className="rounded-xl border border-border bg-card p-4">
+          <h2 className="mb-4 flex items-center gap-2 font-display font-semibold">
+            <MapPin className="h-5 w-5 text-primary" />
+            Adres dostawy
+          </h2>
+          <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="street">Ulica</Label>
+                <Input id="street" placeholder="ul. Marszałkowska" />
+              </div>
+              <div>
+                <Label htmlFor="building">Nr budynku</Label>
+                <Input id="building" placeholder="15" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="apartment">Nr lokalu</Label>
+                <Input id="apartment" placeholder="32" />
+              </div>
+              <div>
+                <Label htmlFor="floor">Piętro</Label>
+                <Input id="floor" type="number" placeholder="3" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="postal">Kod pocztowy</Label>
+                <Input id="postal" placeholder="00-001" />
+              </div>
+              <div>
+                <Label htmlFor="city">Miasto</Label>
+                <Input id="city" value="Warszawa" disabled />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="notes">Uwagi dla kuriera</Label>
+              <Textarea
+                id="notes"
+                placeholder="Np. kod do bramy, dzwonek..."
+                rows={2}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Payment Method */}
+        <section className="rounded-xl border border-border bg-card p-4">
+          <h2 className="mb-4 flex items-center gap-2 font-display font-semibold">
+            <CreditCard className="h-5 w-5 text-primary" />
+            Metoda płatności
+          </h2>
+          <div className="space-y-2">
+            {paymentMethods.map((method) => (
+              <button
+                key={method.id}
+                onClick={() => setSelectedPayment(method.id)}
+                className={cn(
+                  'flex w-full items-center justify-between rounded-xl border p-4 transition-all',
+                  selectedPayment === method.id
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border hover:border-muted-foreground'
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <method.icon
+                    className={cn(
+                      'h-5 w-5',
+                      selectedPayment === method.id
+                        ? 'text-primary'
+                        : 'text-muted-foreground'
+                    )}
+                  />
+                  <div className="text-left">
+                    <p className="font-medium">{method.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {method.description}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className={cn(
+                    'h-5 w-5 rounded-full border-2',
+                    selectedPayment === method.id
+                      ? 'border-primary bg-primary'
+                      : 'border-muted-foreground'
+                  )}
+                >
+                  {selectedPayment === method.id && (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <div className="h-2 w-2 rounded-full bg-primary-foreground" />
+                    </div>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Order Summary */}
+        <section className="rounded-xl border border-border bg-card p-4">
+          <h2 className="mb-3 font-display font-semibold">Podsumowanie</h2>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">
+                Produkty ({items.length})
+              </span>
+              <span>{subtotal.toFixed(2)} zł</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Dostawa</span>
+              <span>{deliveryCost.toFixed(2)} zł</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Opłata serwisowa</span>
+              <span>{serviceFee.toFixed(2)} zł</span>
+            </div>
+            <div className="border-t border-border pt-2">
+              <div className="flex justify-between text-lg font-bold">
+                <span>Razem</span>
+                <span className="text-primary">{total.toFixed(2)} zł</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Confirmation Checkbox */}
+        <button
+          onClick={() => setIsConfirmed(!isConfirmed)}
+          className={cn(
+            'flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all',
+            isConfirmed ? 'border-success bg-success/5' : 'border-border'
+          )}
+        >
+          <div
+            className={cn(
+              'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2',
+              isConfirmed
+                ? 'border-success bg-success'
+                : 'border-muted-foreground'
+            )}
+          >
+            {isConfirmed && (
+              <CheckCircle className="h-3 w-3 text-success-foreground" />
+            )}
+          </div>
+          <p className="text-sm">
+            <span className="font-medium">
+              Potwierdzam, że zamówienie jest kompletne i poprawne.
+            </span>{' '}
+            <span className="text-muted-foreground">
+              Po dostarczeniu i potwierdzeniu odbioru, nie będę zgłaszać
+              reklamacji dotyczących brakujących produktów.
+            </span>
+          </p>
+        </button>
+      </main>
+
+      {/* Fixed order button */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 p-4 backdrop-blur-lg safe-bottom">
+        <Button
+          onClick={handleOrder}
+          disabled={!isConfirmed}
+          className="w-full gap-2 py-6 text-base font-semibold"
+        >
+          Zamów i zapłać {total.toFixed(2)} zł
+        </Button>
+      </div>
+    </div>
+  );
+}
