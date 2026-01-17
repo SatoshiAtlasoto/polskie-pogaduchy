@@ -1,5 +1,13 @@
 import { Product, Store } from '@/types';
 
+// Import product images
+import cementImg from '@/assets/products/cement.jpg';
+import brickImg from '@/assets/products/brick.jpg';
+import drywallImg from '@/assets/products/drywall.jpg';
+import paintImg from '@/assets/products/paint.jpg';
+import tileAdhesiveImg from '@/assets/products/tile-adhesive.jpg';
+import sandImg from '@/assets/products/sand.jpg';
+
 export const stores: Store[] = [
   {
     id: 'store-1',
@@ -34,7 +42,7 @@ export const products: Product[] = [
     name: 'Cement portlandzki CEM I 42.5R',
     description: 'Cement wysokiej jakości do prac konstrukcyjnych. Worek 25kg.',
     price: 28.99,
-    image: '/placeholder.svg',
+    image: cementImg,
     category: 'Cement i beton',
     weight: 25,
     unit: 'worek',
@@ -49,7 +57,7 @@ export const products: Product[] = [
     name: 'Beton B25 gotowy',
     description: 'Gotowa mieszanka betonowa klasy B25. Worek 25kg.',
     price: 15.49,
-    image: '/placeholder.svg',
+    image: cementImg,
     category: 'Cement i beton',
     weight: 25,
     unit: 'worek',
@@ -66,7 +74,7 @@ export const products: Product[] = [
     description: 'Cegła klinkierowa pełna do elewacji. Paleta 384 szt.',
     price: 1890.00,
     originalPrice: 2199.00,
-    image: '/placeholder.svg',
+    image: brickImg,
     category: 'Cegły i bloczki',
     weight: 850,
     unit: 'paleta',
@@ -81,7 +89,7 @@ export const products: Product[] = [
     name: 'Pustak ceramiczny 25cm',
     description: 'Pustak ścienny ceramiczny Porotherm. Paleta 60 szt.',
     price: 720.00,
-    image: '/placeholder.svg',
+    image: brickImg,
     category: 'Cegły i bloczki',
     weight: 480,
     unit: 'paleta',
@@ -97,7 +105,7 @@ export const products: Product[] = [
     name: 'Styropian EPS 100 10cm',
     description: 'Styropian fasadowy do ocieplenia. Paczka 3m².',
     price: 89.99,
-    image: '/placeholder.svg',
+    image: drywallImg,
     category: 'Izolacje',
     weight: 4.5,
     unit: 'paczka',
@@ -112,7 +120,7 @@ export const products: Product[] = [
     name: 'Wełna mineralna 15cm',
     description: 'Wełna do izolacji poddasza. Rolka 6m².',
     price: 129.00,
-    image: '/placeholder.svg',
+    image: drywallImg,
     category: 'Izolacje',
     weight: 8,
     unit: 'rolka',
@@ -128,7 +136,7 @@ export const products: Product[] = [
     name: 'Płyta GK 12.5mm',
     description: 'Płyta gipsowo-kartonowa standardowa 120x260cm.',
     price: 32.50,
-    image: '/placeholder.svg',
+    image: drywallImg,
     category: 'Płyty i panele',
     weight: 28,
     unit: 'szt.',
@@ -143,7 +151,7 @@ export const products: Product[] = [
     name: 'Płyta OSB 18mm',
     description: 'Płyta wiórowa OSB/3 do konstrukcji. 250x125cm.',
     price: 78.00,
-    image: '/placeholder.svg',
+    image: drywallImg,
     category: 'Płyty i panele',
     weight: 32,
     unit: 'szt.',
@@ -160,7 +168,7 @@ export const products: Product[] = [
     description: 'Farba wewnętrzna zmywalna do ścian i sufitów.',
     price: 149.00,
     originalPrice: 179.00,
-    image: '/placeholder.svg',
+    image: paintImg,
     category: 'Farby i tynki',
     weight: 14,
     unit: 'wiadro',
@@ -175,7 +183,7 @@ export const products: Product[] = [
     name: 'Tynk gipsowy 25kg',
     description: 'Tynk gipsowy maszynowy do wewnątrz.',
     price: 34.99,
-    image: '/placeholder.svg',
+    image: tileAdhesiveImg,
     category: 'Farby i tynki',
     weight: 25,
     unit: 'worek',
@@ -192,7 +200,7 @@ export const products: Product[] = [
     description: 'Akumulatorowa wiertarko-wkrętarka z 2 bateriami.',
     price: 399.00,
     originalPrice: 499.00,
-    image: '/placeholder.svg',
+    image: sandImg,
     category: 'Narzędzia',
     weight: 2.5,
     unit: 'zestaw',
@@ -207,7 +215,7 @@ export const products: Product[] = [
     name: 'Poziomnica laserowa',
     description: 'Laser krzyżowy samopoziomujący z uchwytem.',
     price: 289.00,
-    image: '/placeholder.svg',
+    image: sandImg,
     category: 'Narzędzia',
     weight: 0.8,
     unit: 'szt.',
