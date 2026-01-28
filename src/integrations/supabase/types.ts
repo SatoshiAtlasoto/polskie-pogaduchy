@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          company_name: string | null
+          company_nip: string | null
+          created_at: string
+          deposit_amount: number | null
+          email: string
+          full_name: string | null
+          id: string
+          is_verified: boolean | null
+          level: Database["public"]["Enums"]["user_level"]
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_name?: string | null
+          company_nip?: string | null
+          created_at?: string
+          deposit_amount?: number | null
+          email: string
+          full_name?: string | null
+          id?: string
+          is_verified?: boolean | null
+          level?: Database["public"]["Enums"]["user_level"]
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_name?: string | null
+          company_nip?: string | null
+          created_at?: string
+          deposit_amount?: number | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_verified?: boolean | null
+          level?: Database["public"]["Enums"]["user_level"]
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +67,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_level: "guest" | "verified" | "pro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +194,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_level: ["guest", "verified", "pro"],
+    },
   },
 } as const
