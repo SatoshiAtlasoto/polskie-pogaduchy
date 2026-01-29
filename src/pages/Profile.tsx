@@ -22,7 +22,7 @@ const menuItems = [
   { icon: MapPin, label: 'Adresy dostawy', href: '#' },
   { icon: CreditCard, label: 'Metody płatności', href: '#' },
   { icon: FileText, label: 'Faktury', href: '#' },
-  { icon: Shield, label: 'Weryfikacja tożsamości', href: '#', badge: 'Wymagana' },
+  { icon: Shield, label: 'Weryfikacja tożsamości', href: '/kyc', badge: 'Wymagana' },
   { icon: HelpCircle, label: 'Pomoc i kontakt', href: '#' },
 ];
 
@@ -200,6 +200,12 @@ export default function Profile() {
             <a
               key={item.label}
               href={item.href}
+              onClick={(e) => {
+                if (item.href.startsWith('/')) {
+                  e.preventDefault();
+                  navigate(item.href);
+                }
+              }}
               className="flex items-center justify-between rounded-xl p-4 transition-colors hover:bg-secondary"
             >
               <div className="flex items-center gap-3">
