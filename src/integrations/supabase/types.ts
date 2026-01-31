@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          apartment: string | null
+          building: string
+          city: string
+          created_at: string
+          floor: number
+          id: string
+          is_default: boolean
+          label: string
+          notes: string | null
+          postal_code: string
+          street: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          apartment?: string | null
+          building: string
+          city: string
+          created_at?: string
+          floor?: number
+          id?: string
+          is_default?: boolean
+          label?: string
+          notes?: string | null
+          postal_code: string
+          street: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          apartment?: string | null
+          building?: string
+          city?: string
+          created_at?: string
+          floor?: number
+          id?: string
+          is_default?: boolean
+          label?: string
+          notes?: string | null
+          postal_code?: string
+          street?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       kyc_requests: {
         Row: {
           created_at: string
