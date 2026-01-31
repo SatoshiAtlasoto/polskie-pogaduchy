@@ -1,9 +1,10 @@
-import { Home, Search, ShoppingCart, User, ClipboardList } from 'lucide-react';
+import { Home, Search, ShoppingCart, User, ClipboardList, Shield } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
+import { useAdminRole } from '@/hooks/useAdminRole';
 import { cn } from '@/lib/utils';
 
-const navItems = [
+const baseNavItems = [
   { path: '/', icon: Home, label: 'Główna' },
   { path: '/search', icon: Search, label: 'Szukaj' },
   { path: '/orders', icon: ClipboardList, label: 'Zamówienia' },
@@ -14,6 +15,11 @@ const navItems = [
 export function MobileNav() {
   const location = useLocation();
   const { totalItems } = useCart();
+  const { isAdmin } = useAdminRole();
+
+  const navItems = isAdmin
+    ? [...baseNavItems, { path: '/admin/kyc', icon: Shield, label: 'Admin' }]
+    : baseNavItems;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-lg safe-bottom">
