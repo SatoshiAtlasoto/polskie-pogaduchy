@@ -14,6 +14,7 @@ import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
 import KycVerification from "./pages/KycVerification";
 import AdminKyc from "./pages/AdminKyc";
+import Addresses from "./pages/Addresses";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/kyc" element={<KycVerification />} />
               <Route path="/admin/kyc" element={<AdminKyc />} />
+              <Route path="/addresses" element={<Addresses />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

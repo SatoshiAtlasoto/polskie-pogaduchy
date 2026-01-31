@@ -19,7 +19,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const menuItems = [
-  { icon: MapPin, label: 'Adresy dostawy', href: '#' },
+  { icon: MapPin, label: 'Adresy dostawy', href: '/addresses' },
   { icon: CreditCard, label: 'Metody płatności', href: '#' },
   { icon: FileText, label: 'Faktury', href: '#' },
   { icon: Shield, label: 'Weryfikacja tożsamości', href: '/kyc', badge: 'Wymagana' },
