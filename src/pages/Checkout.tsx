@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -8,12 +8,14 @@ import {
   Building2,
   CheckCircle,
 } from 'lucide-react';
-import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCart } from '@/contexts/CartContext';
+import { useAddresses, Address } from '@/hooks/useAddresses';
+import { useAuth } from '@/contexts/AuthContext';
+import { AddressSelector } from '@/components/checkout/AddressSelector';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -26,8 +28,47 @@ const paymentMethods = [
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, totalWeight, clearCart } = useCart();
+  const { user } = useAuth();
+  const { addresses, loading: addressesLoading } = useAddresses();
+  
   const [selectedPayment, setSelectedPayment] = useState('card');
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  
+  // Manual address form state
+  const [manualAddress, setManualAddress] = useState({
+    street: '',
+    building: '',
+    apartment: '',
+    floor: '',
+    postal_code: '',
+    city: 'Warszawa',
+    notes: '',
+  });
+
+  // Set default address when addresses load
+  useEffect(() => {
+    if (addresses.length > 0 && selectedAddressId === null) {
+      const defaultAddr = addresses.find((a) => a.is_default) || addresses[0];
+      setSelectedAddressId(defaultAddr.id);
+    }
+  }, [addresses, selectedAddressId]);
+
+  const handleSelectAddress = (address: Address | null) => {
+    setSelectedAddressId(address?.id || null);
+    if (address) {
+      // Pre-fill manual form with selected address data
+      setManualAddress({
+        street: address.street,
+        building: address.building,
+        apartment: address.apartment || '',
+        floor: address.floor.toString(),
+        postal_code: address.postal_code,
+        city: address.city,
+        notes: address.notes || '',
+      });
+    }
+  };
 
   // Pricing calculations
   const deliveryBase = 19.99;
@@ -39,6 +80,12 @@ export default function Checkout() {
   const handleOrder = () => {
     if (!isConfirmed) {
       toast.error('Potwierdź kompletność zamówienia');
+      return;
+    }
+
+    // Validate address
+    if (!selectedAddressId && (!manualAddress.street || !manualAddress.building || !manualAddress.postal_code)) {
+      toast.error('Wypełnij wymagane pola adresu');
       return;
     }
 
@@ -77,46 +124,111 @@ export default function Checkout() {
             <MapPin className="h-5 w-5 text-primary" />
             Adres dostawy
           </h2>
-          <div className="grid gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="street">Ulica</Label>
-                <Input id="street" placeholder="ul. Marszałkowska" />
+
+          {/* Address selector for logged-in users */}
+          {user && (
+            <AddressSelector
+              addresses={addresses}
+              selectedAddressId={selectedAddressId}
+              onSelectAddress={handleSelectAddress}
+              loading={addressesLoading}
+            />
+          )}
+
+          {/* Manual address form - shown when no address selected or user not logged in */}
+          {(selectedAddressId === null || !user) && (
+            <div className={cn('grid gap-4', user && addresses.length > 0 && 'mt-4')}>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="street">Ulica</Label>
+                  <Input
+                    id="street"
+                    placeholder="ul. Marszałkowska"
+                    value={manualAddress.street}
+                    onChange={(e) =>
+                      setManualAddress((prev) => ({ ...prev, street: e.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="building">Nr budynku</Label>
+                  <Input
+                    id="building"
+                    placeholder="15"
+                    value={manualAddress.building}
+                    onChange={(e) =>
+                      setManualAddress((prev) => ({ ...prev, building: e.target.value }))
+                    }
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="apartment">Nr lokalu</Label>
+                  <Input
+                    id="apartment"
+                    placeholder="32"
+                    value={manualAddress.apartment}
+                    onChange={(e) =>
+                      setManualAddress((prev) => ({ ...prev, apartment: e.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="floor">Piętro</Label>
+                  <Input
+                    id="floor"
+                    type="number"
+                    placeholder="3"
+                    value={manualAddress.floor}
+                    onChange={(e) =>
+                      setManualAddress((prev) => ({ ...prev, floor: e.target.value }))
+                    }
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="postal">Kod pocztowy</Label>
+                  <Input
+                    id="postal"
+                    placeholder="00-001"
+                    value={manualAddress.postal_code}
+                    onChange={(e) =>
+                      setManualAddress((prev) => ({ ...prev, postal_code: e.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="city">Miasto</Label>
+                  <Input id="city" value={manualAddress.city} disabled />
+                </div>
               </div>
               <div>
-                <Label htmlFor="building">Nr budynku</Label>
-                <Input id="building" placeholder="15" />
+                <Label htmlFor="notes">Uwagi dla kuriera</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Np. kod do bramy, dzwonek..."
+                  rows={2}
+                  value={manualAddress.notes}
+                  onChange={(e) =>
+                    setManualAddress((prev) => ({ ...prev, notes: e.target.value }))
+                  }
+                />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="apartment">Nr lokalu</Label>
-                <Input id="apartment" placeholder="32" />
-              </div>
-              <div>
-                <Label htmlFor="floor">Piętro</Label>
-                <Input id="floor" type="number" placeholder="3" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="postal">Kod pocztowy</Label>
-                <Input id="postal" placeholder="00-001" />
-              </div>
-              <div>
-                <Label htmlFor="city">Miasto</Label>
-                <Input id="city" value="Warszawa" disabled />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="notes">Uwagi dla kuriera</Label>
-              <Textarea
-                id="notes"
-                placeholder="Np. kod do bramy, dzwonek..."
-                rows={2}
-              />
-            </div>
-          </div>
+          )}
+
+          {/* Show selected address notes if any */}
+          {selectedAddressId && (
+            <>
+              {addresses.find((a) => a.id === selectedAddressId)?.notes && (
+                <p className="mt-3 text-sm text-muted-foreground italic">
+                  Uwagi: {addresses.find((a) => a.id === selectedAddressId)?.notes}
+                </p>
+              )}
+            </>
+          )}
         </section>
 
         {/* Payment Method */}
