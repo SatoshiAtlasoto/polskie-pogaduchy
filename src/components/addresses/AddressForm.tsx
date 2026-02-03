@@ -142,19 +142,30 @@ export function AddressForm({ address, onSubmit, onCancel, loading }: AddressFor
         />
 
         <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="postal_code"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Kod pocztowy</FormLabel>
-                <FormControl>
-                  <Input placeholder="00-000" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={form.control}
+          name="postal_code"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Kod pocztowy</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="00-000" 
+                  maxLength={6}
+                  {...field}
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/[^\d]/g, '');
+                    if (value.length > 2) {
+                      value = value.slice(0, 2) + '-' + value.slice(2, 5);
+                    }
+                    field.onChange(value);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
           <FormField
             control={form.control}
