@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User,
@@ -11,12 +12,20 @@ import {
   Star,
   Building2,
   CheckCircle2,
+  Pencil,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { CompanyDataForm } from '@/components/profile/CompanyDataForm';
 
 const menuItems = [
   { icon: MapPin, label: 'Adresy dostawy', href: '/addresses' },
@@ -28,8 +37,10 @@ const menuItems = [
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user, profile, signOut, loading } = useAuth();
+  const { user, profile, signOut, updateProfile } = useAuth();
   const { toast } = useToast();
+  const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -37,6 +48,26 @@ export default function Profile() {
       title: 'Wylogowano',
       description: 'Do zobaczenia!',
     });
+  };
+
+  const handleCompanyDataSubmit = async (data: { company_name: string; company_nip: string }) => {
+    setSubmitting(true);
+    const { error } = await updateProfile(data);
+    setSubmitting(false);
+
+    if (error) {
+      toast({
+        title: 'Błąd',
+        description: 'Nie udało się zapisać danych firmy',
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Zapisano',
+        description: 'Dane firmy zostały zaktualizowane',
+      });
+      setIsCompanyFormOpen(false);
+    }
   };
 
   const getLevelDisplay = (level: string) => {
@@ -91,13 +122,33 @@ export default function Profile() {
                 </div>
               )}
 
-              {profile?.level === 'pro' && profile.company_name && (
+              {/* Company Data Section - visible for all logged in users */}
+              {user && (
                 <div className="mt-4 rounded-lg bg-secondary/50 p-3">
-                  <p className="text-sm text-muted-foreground">Firma</p>
-                  <p className="font-medium">{profile.company_name}</p>
-                  {profile.company_nip && (
-                    <p className="text-xs text-muted-foreground">
-                      NIP: {profile.company_nip}
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">Dane firmy</p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsCompanyFormOpen(true)}
+                      className="h-7 px-2"
+                    >
+                      <Pencil className="mr-1 h-3 w-3" />
+                      {profile?.company_name ? 'Edytuj' : 'Dodaj'}
+                    </Button>
+                  </div>
+                  {profile?.company_name ? (
+                    <>
+                      <p className="font-medium">{profile.company_name}</p>
+                      {profile.company_nip && (
+                        <p className="text-xs text-muted-foreground">
+                          NIP: {profile.company_nip}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Dodaj dane firmy do wystawiania faktur
                     </p>
                   )}
                 </div>
@@ -234,6 +285,26 @@ export default function Profile() {
       </main>
 
       <MobileNav />
+
+      {/* Company Data Dialog */}
+      <Dialog open={isCompanyFormOpen} onOpenChange={setIsCompanyFormOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {profile?.company_name ? 'Edytuj dane firmy' : 'Dodaj dane firmy'}
+            </DialogTitle>
+          </DialogHeader>
+          <CompanyDataForm
+            initialData={{
+              company_name: profile?.company_name || null,
+              company_nip: profile?.company_nip || null,
+            }}
+            onSubmit={handleCompanyDataSubmit}
+            onCancel={() => setIsCompanyFormOpen(false)}
+            loading={submitting}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
