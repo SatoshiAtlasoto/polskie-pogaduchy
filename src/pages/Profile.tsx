@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Pencil,
 } from 'lucide-react';
+import { formatNip } from '@/lib/validators';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { Button } from '@/components/ui/button';
@@ -142,7 +143,7 @@ export default function Profile() {
                       <p className="font-medium">{profile.company_name}</p>
                       {profile.company_nip && (
                         <p className="text-xs text-muted-foreground">
-                          NIP: {profile.company_nip}
+                          NIP: {formatNip(profile.company_nip)}
                         </p>
                       )}
                     </>
