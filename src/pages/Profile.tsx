@@ -27,6 +27,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { CompanyDataForm } from '@/components/profile/CompanyDataForm';
+import { NameEditForm } from '@/components/profile/NameEditForm';
 
 const menuItems = [
   { icon: MapPin, label: 'Adresy dostawy', href: '/addresses' },
@@ -41,6 +42,7 @@ export default function Profile() {
   const { user, profile, signOut, updateProfile } = useAuth();
   const { toast } = useToast();
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
+  const [isNameFormOpen, setIsNameFormOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSignOut = async () => {
@@ -104,9 +106,19 @@ export default function Profile() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <h2 className="font-display text-lg font-bold">
-                    {profile?.full_name || 'Użytkownik'}
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-display text-lg font-bold">
+                      {profile?.full_name || 'Użytkownik'}
+                    </h2>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsNameFormOpen(true)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <Pencil className="h-3 w-3" />
+                    </Button>
+                  </div>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
                   <span className={`text-xs font-medium ${currentLevel.color}`}>
                     {currentLevel.name}
@@ -302,6 +314,38 @@ export default function Profile() {
             }}
             onSubmit={handleCompanyDataSubmit}
             onCancel={() => setIsCompanyFormOpen(false)}
+            loading={submitting}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Name Edit Dialog */}
+      <Dialog open={isNameFormOpen} onOpenChange={setIsNameFormOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edytuj imię i nazwisko</DialogTitle>
+          </DialogHeader>
+          <NameEditForm
+            initialName={profile?.full_name || null}
+            onSubmit={async (fullName) => {
+              setSubmitting(true);
+              const { error } = await updateProfile({ full_name: fullName });
+              setSubmitting(false);
+              if (error) {
+                toast({
+                  title: 'Błąd',
+                  description: 'Nie udało się zapisać imienia i nazwiska',
+                  variant: 'destructive',
+                });
+              } else {
+                toast({
+                  title: 'Zapisano',
+                  description: 'Imię i nazwisko zostało zaktualizowane',
+                });
+                setIsNameFormOpen(false);
+              }
+            }}
+            onCancel={() => setIsNameFormOpen(false)}
             loading={submitting}
           />
         </DialogContent>
