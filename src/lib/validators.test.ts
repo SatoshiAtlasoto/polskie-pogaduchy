@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatNip, isValidNip, formatPostalCode } from './validators';
+import { formatNip, isValidNip, formatPostalCode, formatPhone, isValidPhone, extractPhoneDigits } from './validators';
 
 describe('formatNip', () => {
   it('formats NIP with dashes correctly', () => {
@@ -60,5 +60,52 @@ describe('formatPostalCode', () => {
   it('removes non-digit characters', () => {
     expect(formatPostalCode('00-001')).toBe('00-001');
     expect(formatPostalCode('00 001')).toBe('00-001');
+  });
+});
+
+describe('formatPhone', () => {
+  it('formats phone number with +48 prefix and spaces', () => {
+    expect(formatPhone('123456789')).toBe('+48 123 456 789');
+  });
+
+  it('handles input with existing +48 prefix', () => {
+    expect(formatPhone('+48 123 456 789')).toBe('+48 123 456 789');
+    expect(formatPhone('48123456789')).toBe('+48 123 456 789');
+  });
+
+  it('handles partial input', () => {
+    expect(formatPhone('1')).toBe('+48 1');
+    expect(formatPhone('12')).toBe('+48 12');
+    expect(formatPhone('123')).toBe('+48 123');
+    expect(formatPhone('1234')).toBe('+48 123 4');
+    expect(formatPhone('123456')).toBe('+48 123 456');
+    expect(formatPhone('1234567')).toBe('+48 123 456 7');
+  });
+
+  it('removes non-digit characters', () => {
+    expect(formatPhone('123-456-789')).toBe('+48 123 456 789');
+    expect(formatPhone('123 456 789')).toBe('+48 123 456 789');
+  });
+});
+
+describe('isValidPhone', () => {
+  it('validates correct 9-digit phone numbers', () => {
+    expect(isValidPhone('123456789')).toBe(true);
+    expect(isValidPhone('+48 123 456 789')).toBe(true);
+    expect(isValidPhone('48123456789')).toBe(true);
+  });
+
+  it('rejects phone numbers with wrong length', () => {
+    expect(isValidPhone('12345678')).toBe(false); // 8 digits
+    expect(isValidPhone('1234567890')).toBe(false); // 10 digits
+    expect(isValidPhone('')).toBe(false);
+  });
+});
+
+describe('extractPhoneDigits', () => {
+  it('extracts 9 digits from formatted phone', () => {
+    expect(extractPhoneDigits('+48 123 456 789')).toBe('123456789');
+    expect(extractPhoneDigits('48123456789')).toBe('123456789');
+    expect(extractPhoneDigits('123456789')).toBe('123456789');
   });
 });

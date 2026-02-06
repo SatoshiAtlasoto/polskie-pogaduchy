@@ -13,8 +13,9 @@ import {
   Building2,
   CheckCircle2,
   Pencil,
+  Phone,
 } from 'lucide-react';
-import { formatNip } from '@/lib/validators';
+import { formatNip, formatPhone } from '@/lib/validators';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { CompanyDataForm } from '@/components/profile/CompanyDataForm';
 import { NameEditForm } from '@/components/profile/NameEditForm';
+import { PhoneEditForm } from '@/components/profile/PhoneEditForm';
 
 const menuItems = [
   { icon: MapPin, label: 'Adresy dostawy', href: '/addresses' },
@@ -43,6 +45,7 @@ export default function Profile() {
   const { toast } = useToast();
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [isNameFormOpen, setIsNameFormOpen] = useState(false);
+  const [isPhoneFormOpen, setIsPhoneFormOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSignOut = async () => {
@@ -120,6 +123,20 @@ export default function Profile() {
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <div className="flex items-center gap-1">
+                    <Phone className="h-3 w-3 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">
+                      {profile?.phone ? formatPhone(profile.phone) : 'Brak numeru'}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsPhoneFormOpen(true)}
+                      className="h-5 w-5 p-0 ml-1"
+                    >
+                      <Pencil className="h-2.5 w-2.5" />
+                    </Button>
+                  </div>
                   <span className={`text-xs font-medium ${currentLevel.color}`}>
                     {currentLevel.name}
                   </span>
@@ -346,6 +363,38 @@ export default function Profile() {
               }
             }}
             onCancel={() => setIsNameFormOpen(false)}
+            loading={submitting}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Phone Edit Dialog */}
+      <Dialog open={isPhoneFormOpen} onOpenChange={setIsPhoneFormOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edytuj numer telefonu</DialogTitle>
+          </DialogHeader>
+          <PhoneEditForm
+            initialPhone={profile?.phone || null}
+            onSubmit={async (phone) => {
+              setSubmitting(true);
+              const { error } = await updateProfile({ phone });
+              setSubmitting(false);
+              if (error) {
+                toast({
+                  title: 'Błąd',
+                  description: 'Nie udało się zapisać numeru telefonu',
+                  variant: 'destructive',
+                });
+              } else {
+                toast({
+                  title: 'Zapisano',
+                  description: 'Numer telefonu został zaktualizowany',
+                });
+                setIsPhoneFormOpen(false);
+              }
+            }}
+            onCancel={() => setIsPhoneFormOpen(false)}
             loading={submitting}
           />
         </DialogContent>
