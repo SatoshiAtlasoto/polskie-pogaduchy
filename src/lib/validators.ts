@@ -79,3 +79,56 @@ export function isValidNip(nip: string): boolean {
   
   return sum % 11 === nums[9];
 }
+
+/**
+ * Validates Polish phone number format (+48 XXX XXX XXX)
+ * Accepts 9 digits (Polish mobile/landline) with optional +48 prefix
+ */
+export const phoneSchema = z
+  .string()
+  .transform((val) => val.replace(/[^\d]/g, ''))
+  .refine((val) => val.length === 9 || (val.startsWith('48') && val.length === 11), {
+    message: 'Numer telefonu musi mieć 9 cyfr',
+  })
+  .transform((val) => (val.startsWith('48') ? val.slice(2) : val));
+
+/**
+ * Formats phone number with automatic spacing (+48 XXX XXX XXX)
+ */
+export function formatPhone(value: string): string {
+  const digits = value.replace(/[^\d]/g, '');
+  
+  // Remove leading 48 if present
+  const cleanDigits = digits.startsWith('48') ? digits.slice(2) : digits;
+  
+  let formatted = '+48 ';
+  
+  if (cleanDigits.length > 0) {
+    formatted += cleanDigits.slice(0, 3);
+  }
+  if (cleanDigits.length > 3) {
+    formatted += ' ' + cleanDigits.slice(3, 6);
+  }
+  if (cleanDigits.length > 6) {
+    formatted += ' ' + cleanDigits.slice(6, 9);
+  }
+  
+  return formatted.trim();
+}
+
+/**
+ * Validates Polish phone number without zod (returns boolean)
+ */
+export function isValidPhone(phone: string): boolean {
+  const digits = phone.replace(/[^\d]/g, '');
+  const cleanDigits = digits.startsWith('48') ? digits.slice(2) : digits;
+  return cleanDigits.length === 9;
+}
+
+/**
+ * Extracts raw 9-digit phone number from formatted string
+ */
+export function extractPhoneDigits(phone: string): string {
+  const digits = phone.replace(/[^\d]/g, '');
+  return digits.startsWith('48') ? digits.slice(2) : digits;
+}
