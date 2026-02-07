@@ -14,6 +14,7 @@ interface Profile {
   is_verified: boolean;
   company_name: string | null;
   company_nip: string | null;
+  avatar_url: string | null;
 }
 
 interface AuthContextType {
