@@ -10,8 +10,6 @@ import {
   ChevronRight,
   Shield,
   Star,
-  Building2,
-  CheckCircle2,
   Pencil,
   Phone,
 } from 'lucide-react';
@@ -30,6 +28,7 @@ import {
 import { CompanyDataForm } from '@/components/profile/CompanyDataForm';
 import { NameEditForm } from '@/components/profile/NameEditForm';
 import { PhoneEditForm } from '@/components/profile/PhoneEditForm';
+import { AvatarUpload } from '@/components/profile/AvatarUpload';
 
 const menuItems = [
   { icon: MapPin, label: 'Adresy dostawy', href: '/addresses' },
@@ -87,6 +86,15 @@ export default function Profile() {
     }
   };
 
+  const getInitials = (name: string | null | undefined): string => {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
   const currentLevel = profile?.level ? getLevelDisplay(profile.level) : getLevelDisplay('guest');
 
   return (
@@ -99,15 +107,12 @@ export default function Profile() {
           {user ? (
             <>
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  {profile?.level === 'pro' ? (
-                    <Building2 className="h-8 w-8 text-primary" />
-                  ) : profile?.level === 'verified' ? (
-                    <CheckCircle2 className="h-8 w-8 text-green-500" />
-                  ) : (
-                    <User className="h-8 w-8 text-primary" />
-                  )}
-                </div>
+                <AvatarUpload
+                  userId={user.id}
+                  currentAvatarUrl={profile?.avatar_url || null}
+                  fallbackInitials={getInitials(profile?.full_name)}
+                  onAvatarChange={(url) => updateProfile({ avatar_url: url })}
+                />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h2 className="font-display text-lg font-bold">
