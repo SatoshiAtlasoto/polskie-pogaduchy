@@ -103,6 +103,7 @@ export type Database = {
           avatar_url: string | null
           company_name: string | null
           company_nip: string | null
+          company_regon: string | null
           created_at: string
           deposit_amount: number | null
           email: string
@@ -118,6 +119,7 @@ export type Database = {
           avatar_url?: string | null
           company_name?: string | null
           company_nip?: string | null
+          company_regon?: string | null
           created_at?: string
           deposit_amount?: number | null
           email: string
@@ -133,6 +135,7 @@ export type Database = {
           avatar_url?: string | null
           company_name?: string | null
           company_nip?: string | null
+          company_regon?: string | null
           created_at?: string
           deposit_amount?: number | null
           email?: string
