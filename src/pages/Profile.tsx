@@ -13,7 +13,7 @@ import {
   Pencil,
   Phone,
 } from 'lucide-react';
-import { formatNip, formatPhone } from '@/lib/validators';
+import { formatNip, formatPhone, formatRegon } from '@/lib/validators';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,7 @@ export default function Profile() {
     });
   };
 
-  const handleCompanyDataSubmit = async (data: { company_name: string; company_nip: string }) => {
+  const handleCompanyDataSubmit = async (data: { company_name: string; company_nip: string; company_regon: string }) => {
     setSubmitting(true);
     const { error } = await updateProfile(data);
     setSubmitting(false);
@@ -178,6 +178,11 @@ export default function Profile() {
                       {profile.company_nip && (
                         <p className="text-xs text-muted-foreground">
                           NIP: {formatNip(profile.company_nip)}
+                        </p>
+                      )}
+                      {profile.company_regon && (
+                        <p className="text-xs text-muted-foreground">
+                          REGON: {formatRegon(profile.company_regon)}
                         </p>
                       )}
                     </>
@@ -333,6 +338,7 @@ export default function Profile() {
             initialData={{
               company_name: profile?.company_name || null,
               company_nip: profile?.company_nip || null,
+              company_regon: profile?.company_regon || null,
             }}
             onSubmit={handleCompanyDataSubmit}
             onCancel={() => setIsCompanyFormOpen(false)}
