@@ -1,4 +1,5 @@
 import { Clock, Plus, Star, Truck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,9 @@ interface ProductCardProps {
 export function ProductCard({ product, className }: ProductCardProps) {
   const { addItem } = useCart();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem(product);
     toast.success('Dodano do koszyka', {
       description: product.name,
@@ -25,9 +28,10 @@ export function ProductCard({ product, className }: ProductCardProps) {
     : null;
 
   return (
-    <div
+    <Link
+      to={`/product/${product.id}`}
       className={cn(
-        'group relative overflow-hidden rounded-xl bg-gradient-card border border-border transition-all hover:border-primary/50',
+        'group relative block overflow-hidden rounded-xl bg-gradient-card border border-border transition-all hover:border-primary/50',
         className
       )}
     >
@@ -94,6 +98,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
