@@ -407,7 +407,7 @@ export default function Checkout() {
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 p-4 backdrop-blur-lg safe-bottom">
         <Button
           onClick={handleOrder}
-          disabled={!isConfirmed}
+          disabled={!isConfirmed || isSubmitting}
           className="w-full gap-2 py-6 text-base font-semibold"
         >
           Zamów i zapłać {total.toFixed(2)} zł
