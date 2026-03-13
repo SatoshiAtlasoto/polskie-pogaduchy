@@ -28,9 +28,10 @@ export function ProductCard({ product, className }: ProductCardProps) {
     : null;
 
   return (
-    <div
+    <Link
+      to={`/product/${product.id}`}
       className={cn(
-        'group relative overflow-hidden rounded-xl bg-gradient-card border border-border transition-all hover:border-primary/50',
+        'group relative block overflow-hidden rounded-xl bg-gradient-card border border-border transition-all hover:border-primary/50',
         className
       )}
     >
