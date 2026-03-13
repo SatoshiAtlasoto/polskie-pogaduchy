@@ -77,25 +77,84 @@ export default function Checkout() {
   const serviceFee = subtotal * 0.05;
   const total = subtotal + deliveryCost + serviceFee;
 
-  const handleOrder = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleOrder = async () => {
     if (!isConfirmed) {
       toast.error('Potwierdź kompletność zamówienia');
       return;
     }
 
-    // Validate address
-    if (!selectedAddressId && (!manualAddress.street || !manualAddress.building || !manualAddress.postal_code)) {
+    if (!user) {
+      toast.error('Musisz być zalogowany, aby złożyć zamówienie');
+      navigate('/auth');
+      return;
+    }
+
+    // Resolve address
+    const selectedAddr = addresses.find((a) => a.id === selectedAddressId);
+    const addr = selectedAddr || manualAddress;
+
+    if (!addr.street || !addr.building || !addr.postal_code) {
       toast.error('Wypełnij wymagane pola adresu');
       return;
     }
 
-    // Here we would integrate with Stripe
-    toast.success('Zamówienie złożone!', {
-      description: 'Przekierowanie do płatności...',
-    });
+    setIsSubmitting(true);
 
-    clearCart();
-    navigate('/orders');
+    try {
+      // Create order
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_id: user.id,
+          address_street: addr.street,
+          address_building: addr.building,
+          address_apartment: selectedAddr?.apartment || manualAddress.apartment || null,
+          address_floor: selectedAddr?.floor ?? parseInt(manualAddress.floor) || 0,
+          address_city: selectedAddr?.city || manualAddress.city,
+          address_postal_code: selectedAddr?.postal_code || manualAddress.postal_code,
+          address_notes: selectedAddr?.notes || manualAddress.notes || null,
+          payment_method: selectedPayment,
+          subtotal,
+          delivery_cost: deliveryCost,
+          service_fee: serviceFee,
+          total,
+        })
+        .select('id')
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = items.map((item) => ({
+        order_id: order.id,
+        product_id: item.product.id,
+        product_name: item.product.name,
+        product_image: item.product.image,
+        price: item.product.price,
+        quantity: item.quantity,
+        weight: item.product.weight,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      toast.success('Zamówienie złożone!', {
+        description: 'Dziękujemy za zakupy',
+      });
+
+      clearCart();
+      navigate('/orders');
+    } catch (error) {
+      console.error('Order error:', error);
+      toast.error('Nie udało się złożyć zamówienia');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (items.length === 0) {
