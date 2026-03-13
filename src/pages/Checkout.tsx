@@ -112,7 +112,7 @@ export default function Checkout() {
           address_street: addr.street,
           address_building: addr.building,
           address_apartment: selectedAddr?.apartment || manualAddress.apartment || null,
-          address_floor: selectedAddr?.floor ?? parseInt(manualAddress.floor) || 0,
+          address_floor: selectedAddr?.floor ?? (parseInt(manualAddress.floor) || 0),
           address_city: selectedAddr?.city || manualAddress.city,
           address_postal_code: selectedAddr?.postal_code || manualAddress.postal_code,
           address_notes: selectedAddr?.notes || manualAddress.notes || null,
