@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import KycVerification from "./pages/KycVerification";
 import AdminKyc from "./pages/AdminKyc";
 import Addresses from "./pages/Addresses";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
