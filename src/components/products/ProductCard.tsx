@@ -1,4 +1,5 @@
 import { Clock, Plus, Star, Truck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
