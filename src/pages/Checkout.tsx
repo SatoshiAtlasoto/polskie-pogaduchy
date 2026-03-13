@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useCart } from '@/contexts/CartContext';
 import { useAddresses, Address } from '@/hooks/useAddresses';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { AddressSelector } from '@/components/checkout/AddressSelector';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
