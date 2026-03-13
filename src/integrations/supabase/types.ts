@@ -98,6 +98,110 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          price: number
+          product_id: string
+          product_image: string | null
+          product_name: string
+          quantity: number
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          price: number
+          product_id: string
+          product_image?: string | null
+          product_name: string
+          quantity?: number
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          price?: number
+          product_id?: string
+          product_image?: string | null
+          product_name?: string
+          quantity?: number
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address_apartment: string | null
+          address_building: string
+          address_city: string
+          address_floor: number | null
+          address_notes: string | null
+          address_postal_code: string
+          address_street: string
+          created_at: string
+          delivery_cost: number
+          id: string
+          payment_method: string
+          service_fee: number
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_apartment?: string | null
+          address_building: string
+          address_city: string
+          address_floor?: number | null
+          address_notes?: string | null
+          address_postal_code: string
+          address_street: string
+          created_at?: string
+          delivery_cost?: number
+          id?: string
+          payment_method?: string
+          service_fee?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_apartment?: string | null
+          address_building?: string
+          address_city?: string
+          address_floor?: number | null
+          address_notes?: string | null
+          address_postal_code?: string
+          address_street?: string
+          created_at?: string
+          delivery_cost?: number
+          id?: string
+          payment_method?: string
+          service_fee?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -186,6 +290,13 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user"
       kyc_status: "pending" | "approved" | "rejected"
+      order_status:
+        | "pending"
+        | "confirmed"
+        | "preparing"
+        | "in_transit"
+        | "delivered"
+        | "cancelled"
       user_level: "guest" | "verified" | "pro"
     }
     CompositeTypes: {
@@ -316,6 +427,14 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       kyc_status: ["pending", "approved", "rejected"],
+      order_status: [
+        "pending",
+        "confirmed",
+        "preparing",
+        "in_transit",
+        "delivered",
+        "cancelled",
+      ],
       user_level: ["guest", "verified", "pro"],
     },
   },
