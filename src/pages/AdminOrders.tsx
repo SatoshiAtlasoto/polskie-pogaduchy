@@ -174,6 +174,7 @@ export default function AdminOrders() {
       <Header />
 
       <main className="container mx-auto px-4 py-6">
+        <AdminNav />
         <div className="flex items-center gap-3 mb-6">
           <Shield className="h-8 w-8 text-primary" />
           <div>

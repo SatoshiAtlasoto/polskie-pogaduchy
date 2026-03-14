@@ -6,6 +6,7 @@ import { useAdminRole } from '@/hooks/useAdminRole';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { AdminNav } from '@/components/admin/AdminNav';
 import { KycRequestCard } from '@/components/admin/KycRequestCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
