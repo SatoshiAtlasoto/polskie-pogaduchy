@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AdminNav } from '@/components/admin/AdminNav';
 import {
   Shield, Clock, CheckCircle, XCircle, Package, Truck, ChefHat,
   CheckCircle2, MapPin, CreditCard,
