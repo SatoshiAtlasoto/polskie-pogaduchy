@@ -39,6 +39,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/kyc" element={<KycVerification />} />
               <Route path="/admin/kyc" element={<AdminKyc />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
               <Route path="/addresses" element={<Addresses />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

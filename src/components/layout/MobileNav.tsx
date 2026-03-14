@@ -18,7 +18,7 @@ export function MobileNav() {
   const { isAdmin } = useAdminRole();
 
   const navItems = isAdmin
-    ? [...baseNavItems, { path: '/admin/kyc', icon: Shield, label: 'Admin' }]
+    ? [...baseNavItems, { path: '/admin/orders', icon: Shield, label: 'Admin' }]
     : baseNavItems;
 
   return (
