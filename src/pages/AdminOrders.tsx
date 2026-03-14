@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AdminNav } from '@/components/admin/AdminNav';
 import {
   Shield, Clock, CheckCircle, XCircle, Package, Truck, ChefHat,
   CheckCircle2, MapPin, CreditCard,
@@ -173,6 +174,7 @@ export default function AdminOrders() {
       <Header />
 
       <main className="container mx-auto px-4 py-6">
+        <AdminNav />
         <div className="flex items-center gap-3 mb-6">
           <Shield className="h-8 w-8 text-primary" />
           <div>

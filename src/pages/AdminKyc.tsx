@@ -6,6 +6,7 @@ import { useAdminRole } from '@/hooks/useAdminRole';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { AdminNav } from '@/components/admin/AdminNav';
 import { KycRequestCard } from '@/components/admin/KycRequestCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -212,6 +213,7 @@ export default function AdminKyc() {
       <Header />
       
       <main className="container mx-auto px-4 py-6">
+        <AdminNav />
         <div className="flex items-center gap-3 mb-6">
           <Shield className="h-8 w-8 text-primary" />
           <div>
