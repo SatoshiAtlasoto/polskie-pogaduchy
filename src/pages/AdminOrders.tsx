@@ -149,6 +149,42 @@ export default function AdminOrders() {
 
   const filteredOrders = orders.filter(o => activeTab === 'all' ? true : o.status === activeTab);
 
+  const exportToCSV = () => {
+    const rows = filteredOrders.flatMap(order =>
+      order.order_items.map(item => ({
+        'ID zamówienia': order.id.slice(0, 8).toUpperCase(),
+        'Data': new Date(order.created_at).toLocaleDateString('pl-PL'),
+        'Klient': order.user_name || '',
+        'Email': order.user_email || '',
+        'Status': statusConfig[order.status].label,
+        'Produkt': item.product_name,
+        'Ilość': item.quantity,
+        'Cena jednostkowa': Number(item.price).toFixed(2),
+        'Wartość pozycji': (Number(item.price) * item.quantity).toFixed(2),
+        'Suma zamówienia': Number(order.total).toFixed(2),
+        'Dostawa': Number(order.delivery_cost).toFixed(2),
+        'Opłata serwisowa': Number(order.service_fee).toFixed(2),
+        'Metoda płatności': order.payment_method === 'card' ? 'Karta' : order.payment_method === 'cash' ? 'Gotówka' : order.payment_method,
+        'Adres': `${order.address_street} ${order.address_building}${order.address_apartment ? '/' + order.address_apartment : ''}, ${order.address_postal_code} ${order.address_city}`,
+      }))
+    );
+    if (rows.length === 0) return;
+    const headers = Object.keys(rows[0]);
+    const csvContent = [
+      headers.join(';'),
+      ...rows.map(row => headers.map(h => `"${String(row[h as keyof typeof row]).replace(/"/g, '""')}"`).join(';'))
+    ].join('\n');
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `zamowienia_${activeTab}_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast({ title: 'Eksport gotowy', description: `Wyeksportowano ${rows.length} wierszy.` });
+  };
+
   const counts = {
     pending: orders.filter(o => o.status === 'pending').length,
     confirmed: orders.filter(o => o.status === 'confirmed').length,
