@@ -150,7 +150,18 @@ export default function AdminOrders() {
     setUpdatingId(null);
   };
 
-  const filteredOrders = orders.filter(o => activeTab === 'all' ? true : o.status === activeTab);
+  const filteredOrders = orders.filter(o => {
+    const matchesTab = activeTab === 'all' ? true : o.status === activeTab;
+    if (!matchesTab) return false;
+    const orderDate = new Date(o.created_at);
+    if (dateFrom && orderDate < dateFrom) return false;
+    if (dateTo) {
+      const endOfDay = new Date(dateTo);
+      endOfDay.setHours(23, 59, 59, 999);
+      if (orderDate > endOfDay) return false;
+    }
+    return true;
+  });
 
   const exportToCSV = () => {
     const rows = filteredOrders.flatMap(order =>
