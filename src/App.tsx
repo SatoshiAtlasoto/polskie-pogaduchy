@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import KycVerification from "./pages/KycVerification";
 import AdminKyc from "./pages/AdminKyc";
 import AdminOrders from "./pages/AdminOrders";
+import AdminDashboard from "./pages/AdminDashboard";
 import Addresses from "./pages/Addresses";
 import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/kyc" element={<KycVerification />} />
               <Route path="/admin/kyc" element={<AdminKyc />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/addresses" element={<Addresses />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
