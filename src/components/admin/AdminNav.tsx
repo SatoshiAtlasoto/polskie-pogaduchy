@@ -1,6 +1,7 @@
 import { useLocation, Link } from 'react-router-dom';
 import { LayoutDashboard, Package, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAdminOrderNotifications } from '@/hooks/useAdminOrderNotifications';
 
 const adminLinks = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -10,6 +11,7 @@ const adminLinks = [
 
 export function AdminNav() {
   const { pathname } = useLocation();
+  useAdminOrderNotifications(true);
 
   return (
     <div className="flex gap-1 rounded-lg bg-muted p-1 mb-6">
