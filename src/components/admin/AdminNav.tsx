@@ -1,8 +1,9 @@
 import { useLocation, Link } from 'react-router-dom';
-import { Package, Shield } from 'lucide-react';
+import { LayoutDashboard, Package, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const adminLinks = [
+  { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/orders', label: 'Zamówienia', icon: Package },
   { to: '/admin/kyc', label: 'Weryfikacja KYC', icon: Shield },
 ];

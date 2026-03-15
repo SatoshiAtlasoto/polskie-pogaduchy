@@ -13,7 +13,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer,
 } from 'recharts';
 import {
-  LayoutDashboard, TrendingUp, ShoppingCart, Users, DollarSign, Package,
+  LayoutDashboard, TrendingUp, ShoppingCart, Users, DollarSign,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 

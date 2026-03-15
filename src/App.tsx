@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import KycVerification from "./pages/KycVerification";
 import AdminKyc from "./pages/AdminKyc";
 import AdminOrders from "./pages/AdminOrders";
+import AdminDashboard from "./pages/AdminDashboard";
 import Addresses from "./pages/Addresses";
 import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
