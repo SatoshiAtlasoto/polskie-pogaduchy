@@ -18,6 +18,7 @@ import {
   CheckCircle2, MapPin, CreditCard, Download,
 } from 'lucide-react';
 import { Constants } from '@/integrations/supabase/types';
+import { DateRangeFilter } from '@/components/admin/DateRangeFilter';
 
 type OrderStatus = typeof Constants.public.Enums.order_status[number];
 
@@ -73,6 +74,8 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -147,7 +150,18 @@ export default function AdminOrders() {
     setUpdatingId(null);
   };
 
-  const filteredOrders = orders.filter(o => activeTab === 'all' ? true : o.status === activeTab);
+  const filteredOrders = orders.filter(o => {
+    const matchesTab = activeTab === 'all' ? true : o.status === activeTab;
+    if (!matchesTab) return false;
+    const orderDate = new Date(o.created_at);
+    if (dateFrom && orderDate < dateFrom) return false;
+    if (dateTo) {
+      const endOfDay = new Date(dateTo);
+      endOfDay.setHours(23, 59, 59, 999);
+      if (orderDate > endOfDay) return false;
+    }
+    return true;
+  });
 
   const exportToCSV = () => {
     const rows = filteredOrders.flatMap(order =>
@@ -223,6 +237,17 @@ export default function AdminOrders() {
             <Download className="h-4 w-4 mr-1" />
             Eksport CSV
           </Button>
+        </div>
+
+        {/* Date range filter */}
+        <div className="mb-4">
+          <DateRangeFilter
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            onDateFromChange={setDateFrom}
+            onDateToChange={setDateTo}
+            onClear={() => { setDateFrom(undefined); setDateTo(undefined); }}
+          />
         </div>
 
         {/* Stats */}
