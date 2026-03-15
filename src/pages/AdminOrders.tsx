@@ -211,12 +211,18 @@ export default function AdminOrders() {
 
       <main className="container mx-auto px-4 py-6">
         <AdminNav />
-        <div className="flex items-center gap-3 mb-6">
-          <Shield className="h-8 w-8 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold">Zarządzanie zamówieniami</h1>
-            <p className="text-muted-foreground">Przeglądaj i zmieniaj statusy zamówień</p>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Shield className="h-8 w-8 text-primary" />
+            <div>
+              <h1 className="text-2xl font-bold">Zarządzanie zamówieniami</h1>
+              <p className="text-muted-foreground">Przeglądaj i zmieniaj statusy zamówień</p>
+            </div>
           </div>
+          <Button variant="outline" size="sm" onClick={exportToCSV} disabled={filteredOrders.length === 0}>
+            <Download className="h-4 w-4 mr-1" />
+            Eksport CSV
+          </Button>
         </div>
 
         {/* Stats */}
