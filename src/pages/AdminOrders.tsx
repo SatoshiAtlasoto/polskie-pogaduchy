@@ -239,6 +239,17 @@ export default function AdminOrders() {
           </Button>
         </div>
 
+        {/* Date range filter */}
+        <div className="mb-4">
+          <DateRangeFilter
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            onDateFromChange={setDateFrom}
+            onDateToChange={setDateTo}
+            onClear={() => { setDateFrom(undefined); setDateTo(undefined); }}
+          />
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-6">
           {(Object.entries(statusConfig) as [OrderStatus, typeof statusConfig[OrderStatus]][]).map(([key, cfg]) => {
