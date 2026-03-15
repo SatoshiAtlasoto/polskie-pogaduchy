@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AdminNav } from '@/components/admin/AdminNav';
 import {
   Shield, Clock, CheckCircle, XCircle, Package, Truck, ChefHat,
-  CheckCircle2, MapPin, CreditCard,
+  CheckCircle2, MapPin, CreditCard, Download,
 } from 'lucide-react';
 import { Constants } from '@/integrations/supabase/types';
 
