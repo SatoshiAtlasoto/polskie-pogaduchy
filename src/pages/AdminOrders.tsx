@@ -18,6 +18,7 @@ import {
   CheckCircle2, MapPin, CreditCard, Download,
 } from 'lucide-react';
 import { Constants } from '@/integrations/supabase/types';
+import { DateRangeFilter } from '@/components/admin/DateRangeFilter';
 
 type OrderStatus = typeof Constants.public.Enums.order_status[number];
 
