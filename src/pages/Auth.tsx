@@ -226,6 +226,19 @@ export default function Auth() {
                 )}
               />
 
+              {isLogin && (
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="h-auto p-0 text-sm text-muted-foreground"
+                    onClick={() => navigate('/reset-password')}
+                  >
+                    Zapomniałeś hasła?
+                  </Button>
+                </div>
+              )}
+
               <Button
                 type="submit"
                 className="w-full"
