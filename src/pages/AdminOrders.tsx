@@ -162,6 +162,13 @@ export default function AdminOrders() {
       endOfDay.setHours(23, 59, 59, 999);
       if (orderDate > endOfDay) return false;
     }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      const matchesName = o.user_name?.toLowerCase().includes(q);
+      const matchesEmail = o.user_email?.toLowerCase().includes(q);
+      const matchesId = o.id.toLowerCase().includes(q.replace('#', ''));
+      if (!matchesName && !matchesEmail && !matchesId) return false;
+    }
     return true;
   });
 
