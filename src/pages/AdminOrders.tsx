@@ -248,8 +248,17 @@ export default function AdminOrders() {
           </Button>
         </div>
 
-        {/* Date range filter */}
-        <div className="mb-4">
+        {/* Search & Date range filter */}
+        <div className="mb-4 flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Szukaj po kliencie lub nr zamówienia..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-9"
+            />
+          </div>
           <DateRangeFilter
             dateFrom={dateFrom}
             dateTo={dateTo}
