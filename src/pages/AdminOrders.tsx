@@ -15,8 +15,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AdminNav } from '@/components/admin/AdminNav';
 import {
   Shield, Clock, CheckCircle, XCircle, Package, Truck, ChefHat,
-  CheckCircle2, MapPin, CreditCard, Download,
+  CheckCircle2, MapPin, CreditCard, Download, Search,
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Constants } from '@/integrations/supabase/types';
 import { DateRangeFilter } from '@/components/admin/DateRangeFilter';
 
@@ -76,6 +77,7 @@ export default function AdminOrders() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -160,6 +162,13 @@ export default function AdminOrders() {
       endOfDay.setHours(23, 59, 59, 999);
       if (orderDate > endOfDay) return false;
     }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      const matchesName = o.user_name?.toLowerCase().includes(q);
+      const matchesEmail = o.user_email?.toLowerCase().includes(q);
+      const matchesId = o.id.toLowerCase().includes(q.replace('#', ''));
+      if (!matchesName && !matchesEmail && !matchesId) return false;
+    }
     return true;
   });
 
@@ -239,8 +248,17 @@ export default function AdminOrders() {
           </Button>
         </div>
 
-        {/* Date range filter */}
-        <div className="mb-4">
+        {/* Search & Date range filter */}
+        <div className="mb-4 flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Szukaj po kliencie lub nr zamówienia..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-9"
+            />
+          </div>
           <DateRangeFilter
             dateFrom={dateFrom}
             dateTo={dateTo}
