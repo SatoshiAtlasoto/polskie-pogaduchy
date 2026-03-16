@@ -18,6 +18,7 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminDashboard from "./pages/AdminDashboard";
 import Addresses from "./pages/Addresses";
 import ProductDetail from "./pages/ProductDetail";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
