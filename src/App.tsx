@@ -18,6 +18,7 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminDashboard from "./pages/AdminDashboard";
 import Addresses from "./pages/Addresses";
 import ProductDetail from "./pages/ProductDetail";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/kyc" element={<KycVerification />} />
               <Route path="/admin/kyc" element={<AdminKyc />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
