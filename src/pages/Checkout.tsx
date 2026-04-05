@@ -149,7 +149,7 @@ export default function Checkout() {
       });
 
       clearCart();
-      navigate('/orders');
+      navigate(`/order-confirmation/${order.id}`);
     } catch (error) {
       console.error('Order error:', error);
       toast.error('Nie udało się złożyć zamówienia');
