@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Package, Clock, CheckCircle2, Truck, XCircle, ChefHat } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
@@ -65,6 +66,39 @@ export default function Orders() {
     };
 
     fetchOrders();
+
+    // Realtime subscription for status updates
+    const channel = supabase
+      .channel('user-orders-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+        },
+        (payload) => {
+          const updated = payload.new as Order;
+          setOrders((prev) =>
+            prev.map((o) => (o.id === updated.id ? { ...o, ...updated } : o))
+          );
+          const statusLabels: Record<string, string> = {
+            pending: 'Oczekuje',
+            confirmed: 'Potwierdzone',
+            preparing: 'Przygotowywane',
+            in_transit: 'W drodze',
+            delivered: 'Dostarczone',
+            cancelled: 'Anulowane',
+          };
+          const label = statusLabels[updated.status] || updated.status;
+          toast.info(`Zamówienie ${updated.id.slice(0, 8).toUpperCase()}: ${label}`);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   if (!user) {

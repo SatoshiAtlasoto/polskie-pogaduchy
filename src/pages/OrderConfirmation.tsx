@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { CheckCircle, Package, MapPin, CreditCard, ArrowLeft, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -63,6 +64,37 @@ export default function OrderConfirmation() {
     };
 
     fetchOrder();
+
+    // Realtime subscription for status updates
+    const channel = supabase
+      .channel(`order-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `id=eq.${id}`,
+        },
+        (payload) => {
+          const updated = payload.new as OrderData;
+          setOrder((prev) => prev ? { ...prev, ...updated } : prev);
+          const statusLabels: Record<string, string> = {
+            confirmed: 'Potwierdzone',
+            preparing: 'Przygotowywane',
+            in_transit: 'W drodze',
+            delivered: 'Dostarczone',
+            cancelled: 'Anulowane',
+          };
+          const label = statusLabels[updated.status] || updated.status;
+          toast.info(`Status zamówienia: ${label}`);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [id, user, navigate]);
 
   if (loading) {
