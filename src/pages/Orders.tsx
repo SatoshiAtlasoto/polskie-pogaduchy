@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { OrderProgressTracker } from '@/components/orders/OrderProgressTracker';
 
 interface OrderItem {
   id: string;
