@@ -145,6 +145,9 @@ export default function OrderConfirmation() {
           <p className="text-xs text-muted-foreground">
             Dziękujemy za zakupy. Możesz śledzić status zamówienia w zakładce "Zamówienia".
           </p>
+          <div className="w-full mt-2">
+            <OrderProgressTracker status={order.status} />
+          </div>
         </div>
 
         {/* Items */}
