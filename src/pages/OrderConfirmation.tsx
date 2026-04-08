@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { OrderProgressTracker } from '@/components/orders/OrderProgressTracker';
 
 interface OrderData {
   id: string;
@@ -144,6 +145,9 @@ export default function OrderConfirmation() {
           <p className="text-xs text-muted-foreground">
             Dziękujemy za zakupy. Możesz śledzić status zamówienia w zakładce "Zamówienia".
           </p>
+          <div className="w-full mt-2">
+            <OrderProgressTracker status={order.status} />
+          </div>
         </div>
 
         {/* Items */}

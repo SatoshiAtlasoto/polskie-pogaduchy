@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { OrderProgressTracker } from '@/components/orders/OrderProgressTracker';
 
 interface OrderItem {
   id: string;
@@ -160,6 +161,9 @@ export default function Orders() {
                       <StatusIcon className="h-4 w-4" />
                       <span className="text-sm font-medium">{status.label}</span>
                     </div>
+
+                  {/* Progress tracker */}
+                  <OrderProgressTracker status={order.status} />
                   </div>
 
                   {/* Items preview */}
