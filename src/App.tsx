@@ -20,6 +20,7 @@ import Addresses from "./pages/Addresses";
 import ProductDetail from "./pages/ProductDetail";
 import ResetPassword from "./pages/ResetPassword";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import OrderDetail from "./pages/OrderDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/addresses" element={<Addresses />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
+              <Route path="/order/:id" element={<OrderDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

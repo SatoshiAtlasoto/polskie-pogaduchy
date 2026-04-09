@@ -149,9 +149,10 @@ export default function Orders() {
               const itemCount = order.order_items?.reduce((sum, i) => sum + i.quantity, 0) || 0;
 
               return (
-                <div
+                <Link
+                  to={`/order/${order.id}`}
                   key={order.id}
-                  className="rounded-xl border border-border bg-card p-4 space-y-3"
+                  className="block rounded-xl border border-border bg-card p-4 space-y-3 transition-colors hover:border-primary/30"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs text-muted-foreground">
@@ -199,7 +200,7 @@ export default function Orders() {
                       {Number(order.total).toFixed(2)} zł
                     </span>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
