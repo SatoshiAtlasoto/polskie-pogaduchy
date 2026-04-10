@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { OrderProgressTracker } from '@/components/orders/OrderProgressTracker';
 
 interface OrderData {
