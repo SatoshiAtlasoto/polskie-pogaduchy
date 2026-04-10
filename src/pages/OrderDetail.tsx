@@ -174,7 +174,32 @@ export default function OrderDetail() {
           <OrderProgressTracker status={order.status} />
         </section>
 
-        {/* Dates */}
+        {/* Cancel button */}
+        {order.status === 'pending' && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="w-full" disabled={cancelling}>
+                <XCircle className="h-4 w-4 mr-2" />
+                {cancelling ? 'Anulowanie...' : 'Anuluj zamówienie'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Anulować zamówienie?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tej operacji nie można cofnąć. Zamówienie #{shortId} zostanie trwale anulowane.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Nie, zostaw</AlertDialogCancel>
+                <AlertDialogAction onClick={handleCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Tak, anuluj
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+
         <section className="rounded-xl border border-border bg-card p-4 space-y-2">
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
