@@ -79,6 +79,20 @@ export default function OrderDetail() {
   const [order, setOrder] = useState<OrderData | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+
+  const handleCancel = async () => {
+    if (!order) return;
+    setCancelling(true);
+    const { data, error } = await supabase.rpc('cancel_order', { _order_id: order.id });
+    setCancelling(false);
+    if (error || !data) {
+      toast.error('Nie udało się anulować zamówienia');
+    } else {
+      toast.success('Zamówienie zostało anulowane');
+      setOrder((prev) => prev ? { ...prev, status: 'cancelled', updated_at: new Date().toISOString() } : prev);
+    }
+  };
 
   useEffect(() => {
     if (!user || !id) {
