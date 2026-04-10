@@ -87,7 +87,7 @@ export default function OrderDetail() {
     const { data, error } = await supabase.rpc('cancel_order', { _order_id: order.id });
     setCancelling(false);
     if (error || !data) {
-      toast.error('Nie udało się anulować zamówienia');
+      toast.error('Nie udało się anulować zamówienia. Sprawdź czy masz wystarczający depozyt na pokrycie kosztów transportu.');
     } else {
       toast.success('Zamówienie zostało anulowane');
       setOrder((prev) => prev ? { ...prev, status: 'cancelled', updated_at: new Date().toISOString() } : prev);
