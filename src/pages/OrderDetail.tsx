@@ -186,14 +186,22 @@ export default function OrderDetail() {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Anulować zamówienie?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Tej operacji nie można cofnąć. Zamówienie #{shortId} zostanie trwale anulowane.
+                <AlertDialogDescription asChild>
+                  <div className="space-y-2">
+                    <p>Tej operacji nie można cofnąć. Zamówienie #{shortId} zostanie trwale anulowane.</p>
+                    <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm">
+                      <p className="font-semibold text-destructive">Opłata za anulację</p>
+                      <p className="text-muted-foreground mt-1">
+                        Z Twojego depozytu zostanie potrącona kwota <span className="font-bold text-foreground">{Number(order.delivery_cost).toFixed(2)} zł</span> na pokrycie kosztów transportu.
+                      </p>
+                    </div>
+                  </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Nie, zostaw</AlertDialogCancel>
                 <AlertDialogAction onClick={handleCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Tak, anuluj
+                  Tak, anuluj ({Number(order.delivery_cost).toFixed(2)} zł)
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
