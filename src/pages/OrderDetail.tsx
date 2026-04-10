@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { OrderProgressTracker } from '@/components/orders/OrderProgressTracker';
 
 interface OrderData {
@@ -68,6 +79,20 @@ export default function OrderDetail() {
   const [order, setOrder] = useState<OrderData | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+
+  const handleCancel = async () => {
+    if (!order) return;
+    setCancelling(true);
+    const { data, error } = await supabase.rpc('cancel_order', { _order_id: order.id });
+    setCancelling(false);
+    if (error || !data) {
+      toast.error('Nie udało się anulować zamówienia');
+    } else {
+      toast.success('Zamówienie zostało anulowane');
+      setOrder((prev) => prev ? { ...prev, status: 'cancelled', updated_at: new Date().toISOString() } : prev);
+    }
+  };
 
   useEffect(() => {
     if (!user || !id) {
@@ -149,7 +174,32 @@ export default function OrderDetail() {
           <OrderProgressTracker status={order.status} />
         </section>
 
-        {/* Dates */}
+        {/* Cancel button */}
+        {order.status === 'pending' && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="w-full" disabled={cancelling}>
+                <XCircle className="h-4 w-4 mr-2" />
+                {cancelling ? 'Anulowanie...' : 'Anuluj zamówienie'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Anulować zamówienie?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tej operacji nie można cofnąć. Zamówienie #{shortId} zostanie trwale anulowane.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Nie, zostaw</AlertDialogCancel>
+                <AlertDialogAction onClick={handleCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Tak, anuluj
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+
         <section className="rounded-xl border border-border bg-card p-4 space-y-2">
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
