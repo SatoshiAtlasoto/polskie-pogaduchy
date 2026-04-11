@@ -18,6 +18,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { OrderProgressTracker } from '@/components/orders/OrderProgressTracker';
+import { useCart } from '@/contexts/CartContext';
+import { products } from '@/data/products';
 
 interface OrderData {
   id: string;
