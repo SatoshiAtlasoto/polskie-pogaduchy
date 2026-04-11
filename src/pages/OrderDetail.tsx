@@ -78,10 +78,31 @@ export default function OrderDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { addItem } = useCart();
   const [order, setOrder] = useState<OrderData | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+
+  const handleReorder = () => {
+    let added = 0;
+    for (const item of items) {
+      const product = products.find((p) => p.id === item.product_id);
+      if (product && product.inStock) {
+        addItem(product, item.quantity);
+        added++;
+      }
+    }
+    if (added === 0) {
+      toast.error('Żaden produkt z tego zamówienia nie jest dostępny');
+    } else if (added < items.length) {
+      toast.success(`Dodano ${added} z ${items.length} produktów do koszyka`);
+      navigate('/cart');
+    } else {
+      toast.success('Wszystkie produkty dodane do koszyka');
+      navigate('/cart');
+    }
+  };
 
   const handleCancel = async () => {
     if (!order) return;
