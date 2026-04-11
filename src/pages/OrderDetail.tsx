@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock, XCircle } from 'lucide-react';
+import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock, XCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,6 +18,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { OrderProgressTracker } from '@/components/orders/OrderProgressTracker';
+import { useCart } from '@/contexts/CartContext';
+import { products } from '@/data/products';
 
 interface OrderData {
   id: string;
@@ -40,6 +42,7 @@ interface OrderData {
 
 interface OrderItem {
   id: string;
+  product_id: string;
   product_name: string;
   product_image: string | null;
   price: number;
@@ -76,10 +79,31 @@ export default function OrderDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { addItem } = useCart();
   const [order, setOrder] = useState<OrderData | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+
+  const handleReorder = () => {
+    let added = 0;
+    for (const item of items) {
+      const product = products.find((p) => p.id === item.product_id);
+      if (product && product.inStock) {
+        addItem(product, item.quantity);
+        added++;
+      }
+    }
+    if (added === 0) {
+      toast.error('Żaden produkt z tego zamówienia nie jest dostępny');
+    } else if (added < items.length) {
+      toast.success(`Dodano ${added} z ${items.length} produktów do koszyka`);
+      navigate('/cart');
+    } else {
+      toast.success('Wszystkie produkty dodane do koszyka');
+      navigate('/cart');
+    }
+  };
 
   const handleCancel = async () => {
     if (!order) return;
@@ -206,6 +230,14 @@ export default function OrderDetail() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+        )}
+
+        {/* Reorder button */}
+        {order.status !== 'pending' && (
+          <Button onClick={handleReorder} className="w-full" variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Zamów ponownie
+          </Button>
         )}
 
         <section className="rounded-xl border border-border bg-card p-4 space-y-2">
