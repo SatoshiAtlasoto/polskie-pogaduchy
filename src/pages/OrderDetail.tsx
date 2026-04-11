@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock, XCircle } from 'lucide-react';
+import { Package, MapPin, CreditCard, ArrowLeft, Calendar, Clock, XCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
