@@ -148,7 +148,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              {profile?.level === 'verified' && profile.deposit_amount > 0 && (
+              {profile && (profile.deposit_amount ?? 0) > 0 && (
                 <div className="mt-4 rounded-lg bg-secondary/50 p-3">
                   <p className="text-sm text-muted-foreground">Depozyt</p>
                   <p className="font-display text-lg font-bold">
