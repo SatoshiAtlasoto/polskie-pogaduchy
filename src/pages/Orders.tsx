@@ -162,10 +162,10 @@ export default function Orders() {
                       <StatusIcon className="h-4 w-4" />
                       <span className="text-sm font-medium">{status.label}</span>
                     </div>
+                  </div>
 
                   {/* Progress tracker */}
                   <OrderProgressTracker status={order.status} />
-                  </div>
 
                   {/* Items preview */}
                   <div className="space-y-1">

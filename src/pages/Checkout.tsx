@@ -158,8 +158,13 @@ export default function Checkout() {
     }
   };
 
+  useEffect(() => {
+    if (items.length === 0) {
+      navigate('/cart');
+    }
+  }, [items.length, navigate]);
+
   if (items.length === 0) {
-    navigate('/cart');
     return null;
   }
 
