@@ -126,7 +126,7 @@ export default function OrderDetail() {
 
     const fetchOrder = async () => {
       const [{ data: orderData }, { data: itemsData }] = await Promise.all([
-        supabase.from('orders').select('*').eq('id', id).single(),
+        supabase.from('orders').select('*').eq('id', id).maybeSingle(),
         supabase.from('order_items').select('*').eq('order_id', id),
       ]);
 
