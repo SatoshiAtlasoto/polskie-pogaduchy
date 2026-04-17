@@ -12,6 +12,8 @@ import {
   Star,
   Pencil,
   Phone,
+  Wallet,
+  Plus,
 } from 'lucide-react';
 import { formatNip, formatPhone, formatRegon } from '@/lib/validators';
 import { Header } from '@/components/layout/Header';
@@ -19,6 +21,7 @@ import { MobileNav } from '@/components/layout/MobileNav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
   DialogContent,
@@ -29,6 +32,8 @@ import { CompanyDataForm } from '@/components/profile/CompanyDataForm';
 import { NameEditForm } from '@/components/profile/NameEditForm';
 import { PhoneEditForm } from '@/components/profile/PhoneEditForm';
 import { AvatarUpload } from '@/components/profile/AvatarUpload';
+import { DepositHistory } from '@/components/profile/DepositHistory';
+import { TopupForm } from '@/components/profile/TopupForm';
 
 const menuItems = [
   { icon: MapPin, label: 'Adresy dostawy', href: '/addresses' },
@@ -45,7 +50,47 @@ export default function Profile() {
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [isNameFormOpen, setIsNameFormOpen] = useState(false);
   const [isPhoneFormOpen, setIsPhoneFormOpen] = useState(false);
+  const [isTopupOpen, setIsTopupOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [historyKey, setHistoryKey] = useState(0);
+
+  const handleTopup = async (amount: number) => {
+    setSubmitting(true);
+    const { data, error } = await supabase.rpc('topup_deposit', {
+      _amount: amount,
+      _description: `Doładowanie depozytu (mock)`,
+    });
+    setSubmitting(false);
+
+    if (error || !data) {
+      toast({
+        title: 'Błąd',
+        description: 'Nie udało się doładować depozytu',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Refresh profile balance
+    if (user) {
+      const { data: refreshed } = await supabase
+        .from('profiles')
+        .select('deposit_amount')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (refreshed) {
+        await updateProfile({ deposit_amount: refreshed.deposit_amount ?? 0 });
+      }
+    }
+
+    setHistoryKey((k) => k + 1);
+    toast({
+      title: 'Doładowano',
+      description: `Depozyt został doładowany o ${amount.toFixed(2)} zł`,
+    });
+    setIsTopupOpen(false);
+  };
 
   const handleSignOut = async () => {
     await signOut();
