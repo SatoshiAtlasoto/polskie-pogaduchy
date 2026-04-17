@@ -12,6 +12,7 @@ import {
   Star,
   Pencil,
   Phone,
+  Plus,
 } from 'lucide-react';
 import { formatNip, formatPhone, formatRegon } from '@/lib/validators';
 import { Header } from '@/components/layout/Header';
@@ -19,6 +20,7 @@ import { MobileNav } from '@/components/layout/MobileNav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
   DialogContent,
@@ -29,6 +31,8 @@ import { CompanyDataForm } from '@/components/profile/CompanyDataForm';
 import { NameEditForm } from '@/components/profile/NameEditForm';
 import { PhoneEditForm } from '@/components/profile/PhoneEditForm';
 import { AvatarUpload } from '@/components/profile/AvatarUpload';
+import { DepositHistory } from '@/components/profile/DepositHistory';
+import { TopupForm } from '@/components/profile/TopupForm';
 
 const menuItems = [
   { icon: MapPin, label: 'Adresy dostawy', href: '/addresses' },
@@ -45,7 +49,47 @@ export default function Profile() {
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [isNameFormOpen, setIsNameFormOpen] = useState(false);
   const [isPhoneFormOpen, setIsPhoneFormOpen] = useState(false);
+  const [isTopupOpen, setIsTopupOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [historyKey, setHistoryKey] = useState(0);
+
+  const handleTopup = async (amount: number) => {
+    setSubmitting(true);
+    const { data, error } = await supabase.rpc('topup_deposit', {
+      _amount: amount,
+      _description: `Doładowanie depozytu (mock)`,
+    });
+    setSubmitting(false);
+
+    if (error || !data) {
+      toast({
+        title: 'Błąd',
+        description: 'Nie udało się doładować depozytu',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Refresh profile balance
+    if (user) {
+      const { data: refreshed } = await supabase
+        .from('profiles')
+        .select('deposit_amount')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (refreshed) {
+        await updateProfile({ deposit_amount: refreshed.deposit_amount ?? 0 });
+      }
+    }
+
+    setHistoryKey((k) => k + 1);
+    toast({
+      title: 'Doładowano',
+      description: `Depozyt został doładowany o ${amount.toFixed(2)} zł`,
+    });
+    setIsTopupOpen(false);
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -148,12 +192,29 @@ export default function Profile() {
                 </div>
               </div>
 
-              {profile && (profile.deposit_amount ?? 0) > 0 && (
+              {profile && (
                 <div className="mt-4 rounded-lg bg-secondary/50 p-3">
-                  <p className="text-sm text-muted-foreground">Depozyt</p>
-                  <p className="font-display text-lg font-bold">
-                    {profile.deposit_amount.toFixed(2)} zł
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Depozyt</p>
+                      <p className="font-display text-lg font-bold">
+                        {(profile.deposit_amount ?? 0).toFixed(2)} zł
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsHistoryOpen(true)}
+                      >
+                        Historia
+                      </Button>
+                      <Button size="sm" onClick={() => setIsTopupOpen(true)}>
+                        <Plus className="mr-1 h-3 w-3" />
+                        Doładuj
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -408,6 +469,30 @@ export default function Profile() {
             onCancel={() => setIsPhoneFormOpen(false)}
             loading={submitting}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Topup Dialog */}
+      <Dialog open={isTopupOpen} onOpenChange={setIsTopupOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Doładuj depozyt</DialogTitle>
+          </DialogHeader>
+          <TopupForm
+            onSubmit={handleTopup}
+            onCancel={() => setIsTopupOpen(false)}
+            loading={submitting}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Deposit History Dialog */}
+      <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+        <DialogContent className="max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Historia depozytu</DialogTitle>
+          </DialogHeader>
+          <DepositHistory key={historyKey} />
         </DialogContent>
       </Dialog>
     </div>
