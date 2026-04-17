@@ -472,6 +472,30 @@ export default function Profile() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Topup Dialog */}
+      <Dialog open={isTopupOpen} onOpenChange={setIsTopupOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Doładuj depozyt</DialogTitle>
+          </DialogHeader>
+          <TopupForm
+            onSubmit={handleTopup}
+            onCancel={() => setIsTopupOpen(false)}
+            loading={submitting}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Deposit History Dialog */}
+      <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+        <DialogContent className="max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Historia depozytu</DialogTitle>
+          </DialogHeader>
+          <DepositHistory key={historyKey} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
