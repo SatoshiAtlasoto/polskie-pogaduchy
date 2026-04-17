@@ -193,12 +193,29 @@ export default function Profile() {
                 </div>
               </div>
 
-              {profile && (profile.deposit_amount ?? 0) > 0 && (
+              {profile && (
                 <div className="mt-4 rounded-lg bg-secondary/50 p-3">
-                  <p className="text-sm text-muted-foreground">Depozyt</p>
-                  <p className="font-display text-lg font-bold">
-                    {profile.deposit_amount.toFixed(2)} zł
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Depozyt</p>
+                      <p className="font-display text-lg font-bold">
+                        {(profile.deposit_amount ?? 0).toFixed(2)} zł
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsHistoryOpen(true)}
+                      >
+                        Historia
+                      </Button>
+                      <Button size="sm" onClick={() => setIsTopupOpen(true)}>
+                        <Plus className="mr-1 h-3 w-3" />
+                        Doładuj
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
 
