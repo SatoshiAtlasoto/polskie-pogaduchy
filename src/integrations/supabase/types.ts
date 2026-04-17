@@ -62,6 +62,47 @@ export type Database = {
         }
         Relationships: []
       }
+      deposit_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          description: string
+          id: string
+          order_id: string | null
+          type: Database["public"]["Enums"]["deposit_transaction_type"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          created_at?: string
+          description: string
+          id?: string
+          order_id?: string | null
+          type: Database["public"]["Enums"]["deposit_transaction_type"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          description?: string
+          id?: string
+          order_id?: string | null
+          type?: Database["public"]["Enums"]["deposit_transaction_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deposit_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kyc_requests: {
         Row: {
           created_at: string
@@ -287,9 +328,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      topup_deposit: {
+        Args: { _amount: number; _description?: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      deposit_transaction_type: "topup" | "deduction" | "refund" | "adjustment"
       kyc_status: "pending" | "approved" | "rejected"
       order_status:
         | "pending"
@@ -427,6 +473,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      deposit_transaction_type: ["topup", "deduction", "refund", "adjustment"],
       kyc_status: ["pending", "approved", "rejected"],
       order_status: [
         "pending",
