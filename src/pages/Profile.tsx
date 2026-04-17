@@ -12,7 +12,6 @@ import {
   Star,
   Pencil,
   Phone,
-  Wallet,
   Plus,
 } from 'lucide-react';
 import { formatNip, formatPhone, formatRegon } from '@/lib/validators';
