@@ -15,7 +15,17 @@ export interface DepositTransaction {
   created_at: string;
 }
 
-export function useDepositTransactions() {
+export type FilterType = 'all' | DepositTransactionType;
+
+export interface DateRange {
+  from: Date | null;
+  to: Date | null;
+}
+
+export function useDepositTransactions(
+  filterType: FilterType = 'all',
+  dateRange: DateRange = { from: null, to: null }
+) {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<DepositTransaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,10 +37,30 @@ export function useDepositTransactions() {
       return;
     }
     setLoading(true);
-    const { data, error } = await supabase
+    
+    let query = supabase
       .from('deposit_transactions')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', user.id);
+
+    // Filter by type
+    if (filterType !== 'all') {
+      query = query.eq('type', filterType);
+    }
+
+    // Filter by date range
+    if (dateRange.from) {
+      const fromDate = new Date(dateRange.from);
+      fromDate.setHours(0, 0, 0, 0);
+      query = query.gte('created_at', fromDate.toISOString());
+    }
+    if (dateRange.to) {
+      const toDate = new Date(dateRange.to);
+      toDate.setHours(23, 59, 59, 999);
+      query = query.lte('created_at', toDate.toISOString());
+    }
+
+    const { data, error } = await query
       .order('created_at', { ascending: false })
       .limit(100);
 
@@ -41,7 +71,7 @@ export function useDepositTransactions() {
       setTransactions((data ?? []) as DepositTransaction[]);
     }
     setLoading(false);
-  }, [user]);
+  }, [user, filterType, dateRange]);
 
   useEffect(() => {
     fetchTransactions();
